@@ -1252,5 +1252,6 @@ PrefabInstance:
       propertyPath: FULL_BRAKING_POWER
       value: 2000
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 760956529542837778, guid: 497088b80152bf14eaae0e703fd1f8f7, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 497088b80152bf14eaae0e703fd1f8f7, type: 3}
