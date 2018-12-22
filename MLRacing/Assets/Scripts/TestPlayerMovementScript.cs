@@ -95,6 +95,6 @@ public class TestPlayerMovementScript : MonoBehaviour
 
         float forwardSpeed = Mathf.Abs(localVelocity.z);
 
-        gameObject.GetComponent<Rigidbody>().AddForce(new Vector3(0, forwardSpeed * 0.1f, 0));
+        gameObject.GetComponent<Rigidbody>().AddForce(new Vector3(0, -forwardSpeed * 0.1f, 0));
     }
 }
