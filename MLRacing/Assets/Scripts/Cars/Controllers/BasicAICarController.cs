@@ -7,28 +7,31 @@ public class BasicAICarController : MonoBehaviour, ICarController
     [SerializeField]
     private SplineComponent _racingLine;
 
+    [SerializeField]
+    private float _lookAheadDistance = 1;
+
     private CarScript _car;
+
+
 
     public void UpdateControls()
     {
-        var currentPosition = transform.position + transform.forward;
-        var closestPointOnRacingLine = _racingLine.FindClosest(currentPosition);
+        var currentVelocity = gameObject.GetComponent<Rigidbody>().velocity;
+
+        var pointToCheck = transform.position + currentVelocity * _lookAheadDistance;
+        var closestPointOnRacingLine = _racingLine.FindClosest(pointToCheck);
  
+        var heading = (pointToCheck - closestPointOnRacingLine);
+        var varianceMag = heading.magnitude;
 
-        var closestPointLocal = transform.InverseTransformDirection(closestPointOnRacingLine);
-        var variance = (currentPosition - closestPointOnRacingLine);
 
-        Debug.Log("Pos: " + currentPosition);
-        Debug.Log("Closest: " + closestPointOnRacingLine);
+        //Determine if car is to the left or right of racing line
+        Vector3 perp = Vector3.Cross(transform.forward, heading);
+        float dir = Vector3.Dot(perp, transform.up);
 
-        Debug.Log("Local Pos: " + transform.localPosition);
-        Debug.Log("Closest Local: " + closestPointLocal);
+        Debug.Log(dir);
 
-        Debug.Log("Variance: " + variance);
-
-        var varianceMag = variance.magnitude;
-
-        if(variance.x > 0)
+        if (dir < 0)
         {
             _car.SetTurningPower(varianceMag);
         }
@@ -37,7 +40,12 @@ public class BasicAICarController : MonoBehaviour, ICarController
             _car.SetTurningPower(-varianceMag);
         }
 
+
         _car.SetAccelerationPower(1);
+
+
+        _debugPointToCheck = pointToCheck;
+        _debugClosestPoint = closestPointOnRacingLine;
     }
 
     // Start is called before the first frame update
@@ -45,5 +53,17 @@ public class BasicAICarController : MonoBehaviour, ICarController
     {
         _car = GetComponent<CarScript>();
         _car.RegisterController(this);
+    }
+
+
+    private Vector3 _debugPointToCheck = new Vector3();
+    private Vector3 _debugClosestPoint = new Vector3();
+    void OnDrawGizmos()
+    {
+        Gizmos.color = Color.green;
+        Gizmos.DrawSphere(_debugPointToCheck, 0.1f);
+
+        Gizmos.color = Color.red;
+        Gizmos.DrawSphere(_debugClosestPoint, 0.1f);
     }
 }
